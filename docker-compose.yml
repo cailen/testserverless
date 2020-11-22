@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   gitlab:
-    mem_limit: 2G
+    mem_limit: 4G
     image: 'gitlab/gitlab-ce:latest'
     restart: always
     hostname: 'gitlab.example.com'
@@ -43,7 +43,7 @@ services:
       - --non-interactive
       - --locked=false
       - --url=http://gitlab/
-      - --registration-token=_EEtPfu_yX__Dj9M3eiH
+      - --registration-token=3Dqvbr4SRgsHiecKsNmp
       - --executor=docker
       - --description="My Docker Runner"
       - --docker-image="docker:19.03.12"

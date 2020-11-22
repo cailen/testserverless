@@ -1,3 +1,7 @@
+include:
+  - template: Code-Quality.gitlab-ci.yml
+  - template: Terraform.gitlab-ci.yml
+
 image: python:latest
 
 stages:
