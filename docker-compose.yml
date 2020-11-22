@@ -1,0 +1,55 @@
+version: "3.6"
+services:
+  gitlab:
+    mem_limit: 2G
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: 'gitlab.example.com'
+    environment: 
+      GITLAB_OMNIBUS_CONFIG: |
+        grafana['enable'] = false
+        prometheus['enable'] = false
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - '/srv/gitlab/config:/etc/gitlab'
+      - '/srv/gitlab/logs:/var/log/gitlab'
+      - '/srv/gitlab/data:/var/opt/gitlab'
+    networks:
+      - gitlab
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    depends_on:
+      - gitlab
+    volumes:
+      - '/srv/gitlab/config/gitlab-runner:/etc/gitlab-runner'
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gitlab
+  gitlab-runner-register:
+    image: gitlab/gitlab-runner:alpine
+    restart: "no"
+    depends_on:
+      - gitlab
+    volumes:
+      - '/srv/gitlab/config/gitlab-runner:/etc/gitlab-runner'
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - register
+      - --non-interactive
+      - --locked=false
+      - --url=http://gitlab/
+      - --registration-token=_EEtPfu_yX__Dj9M3eiH
+      - --executor=docker
+      - --description="My Docker Runner"
+      - --docker-image="docker:19.03.12"
+      - --docker-privileged
+      - --docker-volumes="/certs/client"
+    networks:
+      - gitlab
+networks:
+  gitlab:
